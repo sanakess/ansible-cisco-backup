@@ -22,4 +22,10 @@ use_local_server: false
 
 ```
 
-### 
+License
+-------
+
+
+Author Information
+------------------
+sanakess
