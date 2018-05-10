@@ -13,6 +13,7 @@ add hosts to inventory file
 ```
 [cat]
 192.168.x.x
+192.168.y.y
 ```
 
 chose backup method in group_vars/all
