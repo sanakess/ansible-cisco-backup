@@ -1,0 +1,53 @@
+- hosts: cat
+  vars:
+    backup_root: backup
+    ansible_network_os: ios
+    ansible_connection: network_cli
+  tasks:
+
+  - name: gather facts
+    ios_facts:
+      gather_subset: config
+    when: use_local_server == true
+
+  - name: run show running-config on remote devices
+    ios_command:
+      commands: show running
+    register: config
+    when: use_local_server == true
+
+  - name: ensure backup folder is created
+    file:
+      path: "{{ backup_root }}"
+      state: directory
+    when: use_local_server == true
+
+  - name: ensure device folder is created
+    file:
+      path: "{{ backup_root }}/{{ ansible_net_hostname }}"
+      state: directory
+    when: use_local_server == true
+
+  - name: get timestamp
+    command: date +%Y%m%d-%H-%M-%S
+    register: timestamp
+    when: use_local_server == true
+
+  - name: copy run to file
+    copy:
+      content: "{{ config.stdout[0] }}"
+      dest: "{{ backup_root }}/{{ ansible_net_hostname }}/running-config_{{ timestamp.stdout }}"
+    when: use_local_server == true
+
+  - name: make "file prompt quiet"
+    ios_config: 
+      commands: file prompt quiet
+      defaults: no
+    when: use_tftp_server == true
+
+  - name: copy run to tftp
+    ios_command:
+      commands:
+        - copy run tftp://192.168.5.251
+    when: use_tftp_server == true
+
