@@ -20,7 +20,6 @@ chose backup method in group_vars/all
 ```
 use_tftp_server: true
 use_local_server: false
-
 ```
 
 License
